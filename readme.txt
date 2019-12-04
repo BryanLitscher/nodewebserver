@@ -1,3 +1,8 @@
+
+start server on RPI with node webserver.js
+
+open user interface at http://RPIipaddress:8080/
+
 Project references
 
 Set up Raspberry PI, control LED, use WebSocket

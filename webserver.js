@@ -25,7 +25,6 @@ pwm = new Pca9685Driver(options, function(err) {
     console.log("Initialization done");
 });
 
-pwm.setPulseLength(0, 1500);
 
 http.listen(8080); //listen to port 8080
 
@@ -51,20 +50,28 @@ io.sockets.on('connection', function (socket) {// WebSocket Connection
     lightvalue = value;
     socket.emit('light', lightvalue); //send button status to client
   }); 
+
   socket.on('light', function(data) { //get light switch status from client
+
     lightvalue = data;
     if (lightvalue != LED.readSync()) { //only change LED if status has changed
       LED.writeSync(lightvalue); //turn LED on or off
     }
   });
-  socket.on('servo', function(data) { //get light switch status from client
+
+  socket.on('servo', function(data) { //get servo 0 status
     if (data) {
 	pwm.setPulseLength(0, 1000);
     }else{
 	pwm.setPulseLength(0, 2000);
     };
   });
+
+  socket.on('variableservocontrol', function(data) { //get servo 1  status from client
+    pwm.setPulseLength(1, data)
+  });
 });
+
 
 process.on('SIGINT', function () { //on ctrl+c
   LED.writeSync(0); // Turn LED off
